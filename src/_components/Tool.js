@@ -40,23 +40,26 @@ export default function Tool() {
                 }} onMouseUp={() => updateIsMouseDown(false)}>
                     <h1>Parxel: Pixel Art Creator</h1>
                     {stage == 0 ? 
-                    (<div>
+                    [<div key={0}>
                         <h2>Dimensions:</h2>
                         <label htmlFor="gridWidth">Width: </label>
                         <input id="gridWidth" type="number" value={gridWidth} onChange={e => updateGridWidth(e.target.value)} />
                         <label htmlFor="gridHeight">Height: </label>
                         <input id="gridHeight" type="number" value={gridHeight} onChange={e => updateGridHeight(e.target.value)} />
-                        <button onClick={updateStage(1)}>Continue</button>
-                    </div>)
+                        <button onClick={() => {
+                            updateGridStatus(Array(gridWidth*gridHeight).fill("white"));
+                            updateStage(1);
+                        }}>Continue</button>
+                    </div>]
                     :
-                        (<div style={{
+                        [<div style={{
                             display: "flex",
                             flexFlow: "column wrap",
                             justifyContent: "center",
                             alignItems: "center",
                             gap: "20px",
                             marginTop: "40px"
-                        }}>
+                        }} key={1}>
                             <div>
                                 <label htmlFor="paintColor">Paint Color:</label>
                                 <input type="color" id="paintColor" value={paintColor} onChange={e => updatePaintColor(e.target.value)} />
@@ -72,7 +75,7 @@ export default function Tool() {
                             }}>
                                 {gridStatus.map((i, n) => <Pixel coordinate={n} key={n} />)}
                             </div>
-                        </div>)}
+                        </div>]}
                 </div>
             </>
         );
