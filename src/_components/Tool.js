@@ -1,11 +1,13 @@
 "use client"
 import { useState, useEffect } from "react";
 
-export default function Tool({ GRID_WIDTH, GRID_HEIGHT }) {
+export default function Tool() {
     const PIXEL_SIDE_LENGTH = 20;
     const [gridStatus, updateGridStatus] = useState(Array(20*20).fill("white"));
     const [paintColor, updatePaintColor] = useState("black");
     const [isMouseDown, updateIsMouseDown] = useState(false);
+    const [gridWidth, updateGridWidth] = useState(20);
+    const [gridHeight, updateGridHeight] = useState(20);
     const [stage, updateStage] = useState(0);
 
     function Pixel({ coordinate }) {
@@ -14,7 +16,7 @@ export default function Tool({ GRID_WIDTH, GRID_HEIGHT }) {
                 backgroundColor: gridStatus[coordinate],
                 width: PIXEL_SIDE_LENGTH+"px",
                 height: PIXEL_SIDE_LENGTH+"px",
-                border: "1px solid lightgray",
+                border: "0.5px solid lightgray",
                 boxSizing: "border-box"
             }} onPointerOver={() => {
                 if (isMouseDown) {
@@ -28,17 +30,26 @@ export default function Tool({ GRID_WIDTH, GRID_HEIGHT }) {
 
     return (
             <>
-                {
-                    <div style={{
-                        width: "100vw",
-                        height: "100vh",
-                        position: "fixed",
-                        left: "0",
-                        top: "0",
-                        zIndex: "1"
-                    }} onMouseUp={() => updateIsMouseDown(false)}>
-                        <h1>Parxel: Pixel Art Creator</h1>
-                        <div style={{
+                <div style={{
+                    width: "100vw",
+                    height: "100vh",
+                    position: "fixed",
+                    left: "0",
+                    top: "0",
+                    zIndex: "1"
+                }} onMouseUp={() => updateIsMouseDown(false)}>
+                    <h1>Parxel: Pixel Art Creator</h1>
+                    {stage == 0 ? 
+                    (<div>
+                        <h2>Dimensions:</h2>
+                        <label htmlFor="gridWidth">Width: </label>
+                        <input id="gridWidth" type="number" value={gridWidth} onChange={e => updateGridWidth(e.target.value)} />
+                        <label htmlFor="gridHeight">Height: </label>
+                        <input id="gridHeight" type="number" value={gridHeight} onChange={e => updateGridHeight(e.target.value)} />
+                        <button onClick={updateStage(1)}>Continue</button>
+                    </div>)
+                    :
+                        (<div style={{
                             display: "flex",
                             flexFlow: "column wrap",
                             justifyContent: "center",
@@ -54,16 +65,15 @@ export default function Tool({ GRID_WIDTH, GRID_HEIGHT }) {
                                 display: "flex",
                                 flexFlow: "row wrap",
                                 padding: "0",
-                                width: PIXEL_SIDE_LENGTH*GRID_WIDTH+"px",
-                                height: PIXEL_SIDE_LENGTH*GRID_HEIGHT+"px",
+                                width: PIXEL_SIDE_LENGTH*gridWidth+"px",
+                                height: PIXEL_SIDE_LENGTH*gridHeight+"px",
                                 // marginLeft: "auto",
                                 // marginRight: "auto",
                             }}>
                                 {gridStatus.map((i, n) => <Pixel coordinate={n} key={n} />)}
-                        </div>
-                        </div>
-                    </div>
-                }
+                            </div>
+                        </div>)}
+                </div>
             </>
         );
 }
