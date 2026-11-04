@@ -1,6 +1,10 @@
 body {
     text-align: center;
-    font-size: 1.2em;
-    background-color: black;
+    font-size: 1.25em;
+    background-color: rgb(17, 0, 45);
     color: white;
+}
+
+label {
+    margin-right: 10px;
 }
