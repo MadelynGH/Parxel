@@ -42,10 +42,16 @@ export default function Tool() {
                     {stage == 0 ? 
                     [<div key={0}>
                         <h2>Dimensions:</h2>
-                        <label htmlFor="gridWidth">Width: </label>
-                        <input id="gridWidth" type="number" value={gridWidth} onChange={e => updateGridWidth(e.target.value)} />
-                        <label htmlFor="gridHeight">Height: </label>
-                        <input id="gridHeight" type="number" value={gridHeight} onChange={e => updateGridHeight(e.target.value)} />
+                        <div>
+                            <label htmlFor="gridWidth">Width: </label>
+                            <input id="gridWidth" type="number" value={gridWidth} onChange={e => updateGridWidth(e.target.value)} />
+                        </div>
+                        <br />
+                        <div>
+                            <label htmlFor="gridHeight">Height: </label>
+                            <input id="gridHeight" type="number" value={gridHeight} onChange={e => updateGridHeight(e.target.value)} />
+                        </div>
+                        <br />
                         <button onClick={() => {
                             updateGridStatus(Array(gridWidth*gridHeight).fill("white"));
                             updateStage(1);
