@@ -1,5 +1,10 @@
 "use client"
 import { useState, useEffect } from "react";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({
+    weight: ["400"]
+});
 
 export default function Tool() {
     const PIXEL_SIDE_LENGTH = 20;
@@ -44,12 +49,12 @@ export default function Tool() {
                         <h2>Dimensions:</h2>
                         <div>
                             <label htmlFor="gridWidth">Width: </label>
-                            <input id="gridWidth" type="number" value={gridWidth} onChange={e => updateGridWidth(e.target.value)} />
+                            <input className={montserrat.className} id="gridWidth" type="number" value={gridWidth} onChange={e => updateGridWidth(e.target.value)} />
                         </div>
                         <br />
                         <div>
                             <label htmlFor="gridHeight">Height: </label>
-                            <input id="gridHeight" type="number" value={gridHeight} onChange={e => updateGridHeight(e.target.value)} />
+                            <input className={montserrat.className} id="gridHeight" type="number" value={gridHeight} onChange={e => updateGridHeight(e.target.value)} />
                         </div>
                         <br />
                         <button onClick={() => {

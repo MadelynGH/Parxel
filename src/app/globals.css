@@ -8,10 +8,29 @@ body {
 label {
     margin-right: 8px;
     font-weight: 500;
+    font-size: 1.1em;
 }
 
 input[type="color"] {
-    background-color: rgb(255, 251, 224);
+    background-color: #fffbe0;
     border-radius: 6px;
     border: none;
+}
+
+input[type="number"] {
+    border: none;
+    background-color: #fffbe0;
+    padding: 8px;
+    font-size: 1.05em;
+}
+
+input:focus {
+    outline-color: navy;
+}
+
+button {
+    padding: 8px;
+    background-color: white;
+    color: navy;
+    border-radius: 8px;
 }
