@@ -1,0 +1,7 @@
+.draw::after {
+    content: "✎";
+}
+
+.erase::after {
+    content: "⌸";
+}

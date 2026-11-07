@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from "react";
 import { Montserrat } from "next/font/google";
+import styles from "./tool.module.css";
 
 const montserrat = Montserrat({
     weight: ["400"]
@@ -10,6 +11,7 @@ export default function Tool() {
     const PIXEL_SIDE_LENGTH = 20;
     const [gridStatus, updateGridStatus] = useState(Array(20*20).fill("white"));
     const [paintColor, updatePaintColor] = useState("black");
+    const [currentTool, updateCurrentTool] = useState("draw");
     const [isMouseDown, updateIsMouseDown] = useState(false);
     const [gridWidth, updateGridWidth] = useState(20);
     const [gridHeight, updateGridHeight] = useState(20);
@@ -26,10 +28,24 @@ export default function Tool() {
             }} onPointerOver={() => {
                 if (isMouseDown) {
                     let tempGridStatus = gridStatus.slice();
-                    tempGridStatus[coordinate] = paintColor;
+                    if (currentTool == "draw") {
+                        tempGridStatus[coordinate] = paintColor;
+                    } else if (currentTool == "erase") {
+                        tempGridStatus[coordinate] = "white";
+                    }
                     updateGridStatus(tempGridStatus);
                 }
             }} onMouseDown={() => updateIsMouseDown(true)}></div>
+        );
+    }
+
+    function ToolRadioInput({ toolName }) {
+        return (
+            <input title={toolName} type="radio" name="tool" value={toolName} className={styles[toolName]} checked={currentTool == toolName} onChange={() => {
+                updateCurrentTool(toolName);
+            }} style={{
+                border: currentTool == toolName ? "1px solid white" : "none"
+            }} />
         );
     }
 
@@ -60,7 +76,7 @@ export default function Tool() {
                         <button onClick={() => {
                             updateGridStatus(Array(gridWidth*gridHeight).fill("white"));
                             updateStage(1);
-                        }}>Continue</button>
+                        }} className={montserrat.className}>Continue</button>
                     </div>]
                     :
                         [<div style={{
@@ -74,15 +90,24 @@ export default function Tool() {
                             <div>
                                 <label htmlFor="paintColor">Paint Color:</label>
                                 <input type="color" id="paintColor" value={paintColor} onChange={e => updatePaintColor(e.target.value)} />
+                            
+                                <div style={{
+                                    width: PIXEL_SIDE_LENGTH*gridWidth+"px",
+                                    marginTop: "20px",
+                                    display: "flex",
+                                    flexFlow: "row wrap",
+                                    justifyContent: "center"
+                                }}>
+                                    <ToolRadioInput toolName="draw" />
+                                    <ToolRadioInput toolName="erase" />
+                                </div>
                             </div>
                             <div style={{
                                 display: "flex",
                                 flexFlow: "row wrap",
                                 padding: "0",
                                 width: PIXEL_SIDE_LENGTH*gridWidth+"px",
-                                height: PIXEL_SIDE_LENGTH*gridHeight+"px",
-                                // marginLeft: "auto",
-                                // marginRight: "auto",
+                                height: PIXEL_SIDE_LENGTH*gridHeight+"px"
                             }}>
                                 {gridStatus.map((i, n) => <Pixel coordinate={n} key={n} />)}
                             </div>

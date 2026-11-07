@@ -11,6 +11,10 @@ label {
     font-size: 1.1em;
 }
 
+input {
+    border-radius: 8px;
+}
+
 input[type="color"] {
     background-color: #fffbe0;
     border-radius: 6px;
@@ -30,7 +34,35 @@ input:focus {
 
 button {
     padding: 8px;
-    background-color: white;
+    background-color: #fffbe0;
     color: navy;
     border-radius: 8px;
+    border: none;
+    font-size: 1.1em;
+    transition-duration: 0.3s;
+}
+
+button:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+input[type="radio"] {
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+input[type="radio"]:hover {
+    cursor: pointer;
+}
+
+input[type="radio"]::after {
+    color: white;
+    font-size: 1.5em;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
 }
