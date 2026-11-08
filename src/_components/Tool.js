@@ -8,7 +8,8 @@ const montserrat = Montserrat({
 });
 
 export default function Tool() {
-    const PIXEL_SIDE_LENGTH = 20;
+    const DEFAULT_PIXEL_SIDE_LENGTH = 20;
+    const [pixelSideLength, updatePixelSideLength] = useState(DEFAULT_PIXEL_SIDE_LENGTH);
     const [gridStatus, updateGridStatus] = useState(Array(20*20).fill("white"));
     const [paintColor, updatePaintColor] = useState("black");
     const [currentTool, updateCurrentTool] = useState("draw");
@@ -24,8 +25,8 @@ export default function Tool() {
         return (
             <div style={{
                 backgroundColor: gridStatus[coordinate],
-                width: PIXEL_SIDE_LENGTH+"px",
-                height: PIXEL_SIDE_LENGTH+"px",
+                width: pixelSideLength+"px",
+                height: pixelSideLength+"px",
                 border: "0.5px solid lightgray",
                 boxSizing: "border-box"
             }} onPointerOver={() => {
@@ -42,14 +43,20 @@ export default function Tool() {
         );
     }
 
-    function ToolRadioInput({ toolName }) {
-        return (
-            <input title={toolName} type="radio" name="tool" value={toolName} className={styles[toolName]} checked={currentTool == toolName} onChange={() => {
-                updateCurrentTool(toolName);
-            }} style={{
-                border: currentTool == toolName ? "1px solid white" : "none"
-            }} />
-        );
+    function IconRadioInput({ thingType, thingName, onClick, actionContent }) {
+        if (thingType == "tool") {
+            return (
+                <input title={thingName} type="radio" name="tool" value={thingName} className={styles[thingName]} checked={currentTool == thingName} onChange={() => {
+                    updateCurrentTool(thingName);
+                }} style={{
+                    border: currentTool == thingName ? "1px solid white" : "none"
+                }} />
+            );
+        } else if (thingType == "action") {
+            return (
+                <button title={thingName} className={styles.actionButton} onClick={onClick}>{actionContent}</button>
+            );
+        }
     }
 
     return (
@@ -63,14 +70,14 @@ export default function Tool() {
                     }}>Parxel: Pixel Art Creator</h1>
                     {stage == 0 ? 
                     [<div key={0}>
-                        <h2>Dimensions:</h2>
+                        <h2>New Project:</h2>
                         <div>
-                            <label htmlFor="gridWidth">Width: </label>
+                            <label htmlFor="gridWidth">Grid Width: </label>
                             <input className={montserrat.className} id="gridWidth" type="number" value={gridWidth} onChange={e => updateGridWidth(e.target.value)} />
                         </div>
                         <br />
                         <div>
-                            <label htmlFor="gridHeight">Height: </label>
+                            <label htmlFor="gridHeight">Grid Height: </label>
                             <input className={montserrat.className} id="gridHeight" type="number" value={gridHeight} onChange={e => updateGridHeight(e.target.value)} />
                         </div>
                         <br />
@@ -111,29 +118,52 @@ export default function Tool() {
                             alignItems: "center",
                             gap: "20px",
                             marginTop: "40px",
-                            yOverflow: "scroll"
+                            yOverflow: "scroll",
+                            xOverflow: "scroll"
                         }} key={1}>
                             <div>
                                 <label htmlFor="paintColor">Paint Color:</label>
                                 <input type="color" id="paintColor" value={paintColor} onChange={e => updatePaintColor(e.target.value)} />
                             
                                 <div style={{
-                                    width: PIXEL_SIDE_LENGTH*gridWidth+"px",
+                                    width: DEFAULT_PIXEL_SIDE_LENGTH*gridWidth+"px",
                                     marginTop: "20px",
                                     display: "flex",
                                     flexFlow: "row wrap",
-                                    justifyContent: "center"
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    border: "1px solid white",
+                                    padding: "5px"
                                 }}>
-                                    <ToolRadioInput toolName="draw" />
-                                    <ToolRadioInput toolName="erase" />
+                                    <div style={{
+                                        display: "flex",
+                                        flexFlow: "row wrap",
+                                        justifyContent: "center"
+                                    }}>
+                                        <IconRadioInput thingType="tool" thingName="draw" />
+                                        <IconRadioInput thingType="tool" thingName="erase" />
+                                    </div>
+                                    
+                                    <div style={{
+                                        display: "flex",
+                                        flexFlow: "row wrap",
+                                        justifyContent: "center"
+                                    }}>
+                                        <IconRadioInput thingType="action" actionContent="⌕+" thingName="zoom in" onClick={() =>
+                                            updatePixelSideLength(pixelSideLength + 10)
+                                        } />
+                                        <IconRadioInput thingType="action" actionContent="⌕-" thingName="zoom out" onClick={() =>
+                                            updatePixelSideLength(pixelSideLength - 10)
+                                        } />
+                                    </div>
                                 </div>
                             </div>
                             <div style={{
                                 display: "flex",
                                 flexFlow: "row wrap",
                                 padding: "0",
-                                width: PIXEL_SIDE_LENGTH*gridWidth+"px",
-                                height: PIXEL_SIDE_LENGTH*gridHeight+"px"
+                                width: pixelSideLength*gridWidth+"px",
+                                height: pixelSideLength*gridHeight+"px"
                             }}>
                                 {gridStatus.map((i, n) => <Pixel coordinate={n} key={n} />)}
                             </div>
@@ -162,14 +192,14 @@ export default function Tool() {
                             }}>Download .parxel</button>
                         </div>]}
 
-                        <svg ref={svgRef} xmlns="http://www.w3.org/2000/svg" width={PIXEL_SIDE_LENGTH*gridWidth+"px"} height={PIXEL_SIDE_LENGTH*gridHeight+"px"} style={{
+                        <svg ref={svgRef} xmlns="http://www.w3.org/2000/svg" width={pixelSideLength*gridWidth+"px"} height={pixelSideLength*gridHeight+"px"} style={{
                             display: "none",
                             border: "1px solid lightgray"
                         }}>
                             {gridStatus.map((color, i) =>
-                                (<rect x={((i % gridWidth)*PIXEL_SIDE_LENGTH)+"px"} y={
-                                    i != 0 ? (Math.floor(i / gridWidth)*PIXEL_SIDE_LENGTH)+"px" : "0px"
-                                } width={PIXEL_SIDE_LENGTH+"px"} height={PIXEL_SIDE_LENGTH+"px"} key={i} style={{
+                                (<rect x={((i % gridWidth)*pixelSideLength)+"px"} y={
+                                    i != 0 ? (Math.floor(i / gridWidth)*pixelSideLength)+"px" : "0px"
+                                } width={pixelSideLength+"px"} height={pixelSideLength+"px"} key={i} style={{
                                     fill: color
                                 }}  />)
                             )}
