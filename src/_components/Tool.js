@@ -197,9 +197,9 @@ export default function Tool() {
                             border: "1px solid lightgray"
                         }}>
                             {gridStatus.map((color, i) =>
-                                (<rect x={((i % gridWidth)*pixelSideLength)+"px"} y={
-                                    i != 0 ? (Math.floor(i / gridWidth)*pixelSideLength)+"px" : "0px"
-                                } width={pixelSideLength+"px"} height={pixelSideLength+"px"} key={i} style={{
+                                (<rect x={((i % gridWidth)*DEFAULT_PIXEL_SIDE_LENGTH)+"px"} y={
+                                    i != 0 ? (Math.floor(i / gridWidth)*DEFAULT_PIXEL_SIDE_LENGTH)+"px" : "0px"
+                                } width={DEFAULT_PIXEL_SIDE_LENGTH+"px"} height={DEFAULT_PIXEL_SIDE_LENGTH+"px"} key={i} style={{
                                     fill: color
                                 }}  />)
                             )}
