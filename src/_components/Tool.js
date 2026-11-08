@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Montserrat } from "next/font/google";
 import styles from "./tool.module.css";
 
@@ -16,6 +16,9 @@ export default function Tool() {
     const [gridWidth, updateGridWidth] = useState(20);
     const [gridHeight, updateGridHeight] = useState(20);
     const [stage, updateStage] = useState(0);
+    
+    const fileInput = useRef(null);
+    let svgRef = useRef(null);
 
     function Pixel({ coordinate }) {
         return (
@@ -52,14 +55,12 @@ export default function Tool() {
     return (
             <>
                 <div style={{
-                    width: "100vw",
-                    height: "100vh",
-                    position: "fixed",
-                    left: "0",
-                    top: "0",
-                    zIndex: "1"
+                    paddingTop: "30px",
+                    height: "100%"
                 }} onMouseUp={() => updateIsMouseDown(false)}>
-                    <h1>Parxel: Pixel Art Creator</h1>
+                    <h1 style={{
+                        marginTop: 0
+                    }}>Parxel: Pixel Art Creator</h1>
                     {stage == 0 ? 
                     [<div key={0}>
                         <h2>Dimensions:</h2>
@@ -77,6 +78,30 @@ export default function Tool() {
                             updateGridStatus(Array(gridWidth*gridHeight).fill("white"));
                             updateStage(1);
                         }} className={montserrat.className}>Continue</button>
+                    </div>, <h3 key={1}>-- OR --</h3>,
+                    <div key={2}>
+                        <h2>Import .parxel file</h2>
+                        <input type="file" ref={fileInput} style={{
+                            marginBottom: "20px"
+                        }} accept=".parxel" />
+                        <br />
+                        <button className={montserrat.className} onClick={() => {
+                            if (fileInput.current.files[0]) {
+                                const reader = new FileReader();
+
+                                reader.addEventListener("load", () => {
+                                    const info = JSON.parse(reader.result);
+                                    updateGridWidth(info["gridWidth"]);
+                                    updateGridHeight(info["gridHeight"]);
+                                    updateGridStatus(info["gridStatus"]);
+                                    updateStage(1);
+                                });
+
+                                reader.readAsText(new Blob([fileInput.current.files[0]], { type: "text" }));
+                            } else {
+                                alert("Please upload a file.");
+                            }
+                        }}>Continue</button>
                     </div>]
                     :
                         [<div style={{
@@ -85,7 +110,8 @@ export default function Tool() {
                             justifyContent: "center",
                             alignItems: "center",
                             gap: "20px",
-                            marginTop: "40px"
+                            marginTop: "40px",
+                            yOverflow: "scroll"
                         }} key={1}>
                             <div>
                                 <label htmlFor="paintColor">Paint Color:</label>
@@ -111,7 +137,47 @@ export default function Tool() {
                             }}>
                                 {gridStatus.map((i, n) => <Pixel coordinate={n} key={n} />)}
                             </div>
+                            <button onClick={() => {
+                                const svgCode = svgRef.current.outerHTML;
+                                const blob = new Blob([svgCode], { type: "image/svg-xml" });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.setAttribute("download", "my_parxel_creation.svg");
+                                a.setAttribute("href", url);
+                                a.click();
+                                a.remove();
+                            }}>Download SVG</button>
+                            <button onClick={() => {
+                                const blob = new Blob([JSON.stringify({
+                                    gridWidth: gridWidth,
+                                    gridHeight: gridHeight,
+                                    gridStatus: gridStatus
+                                })], { type: "json/parxel" })
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.setAttribute("download", "my_parxel_creation.parxel");
+                                a.setAttribute("href", url);
+                                a.click();
+                                a.remove();
+                            }}>Download .parxel</button>
                         </div>]}
+
+                        <svg ref={svgRef} xmlns="http://www.w3.org/2000/svg" width={PIXEL_SIDE_LENGTH*gridWidth+"px"} height={PIXEL_SIDE_LENGTH*gridHeight+"px"} style={{
+                            display: "none",
+                            border: "1px solid lightgray"
+                        }}>
+                            {gridStatus.map((color, i) =>
+                                (<rect x={((i % gridWidth)*PIXEL_SIDE_LENGTH)+"px"} y={
+                                    i != 0 ? (Math.floor(i / gridWidth)*PIXEL_SIDE_LENGTH)+"px" : "0px"
+                                } width={PIXEL_SIDE_LENGTH+"px"} height={PIXEL_SIDE_LENGTH+"px"} key={i} style={{
+                                    fill: color
+                                }}  />)
+                            )}
+                        </svg>
+                        <div style={{
+                            marginTop: "20px"
+                        }}>
+                    </div>
                 </div>
             </>
         );

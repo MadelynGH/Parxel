@@ -1,8 +1,13 @@
+html, body {
+    height: 100%;
+}
+
 body {
     text-align: center;
     font-size: 1.25em;
     background-color: rgb(17, 0, 45);
     color: white;
+    margin-top: 0;
 }
 
 label {
