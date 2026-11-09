@@ -3,6 +3,9 @@ A pixel art drawing app! Made with Next.js.
 
 <hr />
 
+## How to Run
+Go to https://madelyngh.github.io/Parxel in your web browser.
+
 ## How to Use
 ### The Landing Page
 On the landing page, you have two options:
