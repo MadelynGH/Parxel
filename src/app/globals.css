@@ -58,6 +58,9 @@ input[type="radio"] {
     height: 40px;
     display: flex;
     align-items: center;
+    margin: 0;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 input[type="radio"]:hover {

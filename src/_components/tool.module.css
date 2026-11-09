@@ -6,6 +6,7 @@
     text-align: center;
     display: inline-block;
     background: none;
+    margin: 0;
 }
 
 .draw::after {
@@ -14,4 +15,15 @@
 
 .erase::after {
     content: "⌸";
+}
+
+.taskBar {
+    margin-top: 20px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid white;
+    padding: 12px;
+    box-sizing: border-box;
 }

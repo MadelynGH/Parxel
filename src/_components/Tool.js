@@ -10,8 +10,8 @@ const montserrat = Montserrat({
 export default function Tool() {
     const DEFAULT_PIXEL_SIDE_LENGTH = 20;
     const [pixelSideLength, updatePixelSideLength] = useState(DEFAULT_PIXEL_SIDE_LENGTH);
-    const [gridStatus, updateGridStatus] = useState(Array(20*20).fill("white"));
-    const [paintColor, updatePaintColor] = useState("black");
+    const [gridStatus, updateGridStatus] = useState(Array(20*20).fill("#ffffff"));
+    const [paintColor, updatePaintColor] = useState("#000000");
     const [currentTool, updateCurrentTool] = useState("draw");
     const [isMouseDown, updateIsMouseDown] = useState(false);
     const [gridWidth, updateGridWidth] = useState(20);
@@ -19,7 +19,14 @@ export default function Tool() {
     const [stage, updateStage] = useState(0);
     
     const fileInput = useRef(null);
-    let svgRef = useRef(null);
+    const svgRef = useRef(null);
+    const history = useRef([gridStatus]);
+
+    useEffect(() => {
+        if ((history.current[history.current.length - 1].toString() != gridStatus.toString()) && isMouseDown == false) {
+            history.current.push(gridStatus);
+        }
+    }, [isMouseDown]);
 
     function Pixel({ coordinate }) {
         return (
@@ -35,7 +42,7 @@ export default function Tool() {
                     if (currentTool == "draw") {
                         tempGridStatus[coordinate] = paintColor;
                     } else if (currentTool == "erase") {
-                        tempGridStatus[coordinate] = "white";
+                        tempGridStatus[coordinate] = "#ffffff";
                     }
                     updateGridStatus(tempGridStatus);
                 }
@@ -49,7 +56,7 @@ export default function Tool() {
                 <input title={thingName} type="radio" name="tool" value={thingName} className={styles[thingName]} checked={currentTool == thingName} onChange={() => {
                     updateCurrentTool(thingName);
                 }} style={{
-                    border: currentTool == thingName ? "1px solid white" : "none"
+                    border: currentTool == thingName ? "1px solid #ffffff" : "none"
                 }} />
             );
         } else if (thingType == "action") {
@@ -64,7 +71,9 @@ export default function Tool() {
                 <div style={{
                     paddingTop: "30px",
                     height: "100%"
-                }} onMouseUp={() => updateIsMouseDown(false)}>
+                }} onMouseUp={() => {
+                    updateIsMouseDown(false);
+                }}>
                     <h1 style={{
                         marginTop: 0
                     }}>Parxel: Pixel Art Creator</h1>
@@ -82,7 +91,7 @@ export default function Tool() {
                         </div>
                         <br />
                         <button onClick={() => {
-                            updateGridStatus(Array(gridWidth*gridHeight).fill("white"));
+                            updateGridStatus(Array(gridWidth*gridHeight).fill("#ffffff"));
                             updateStage(1);
                         }} className={montserrat.className}>Continue</button>
                     </div>, <h3 key={1}>-- OR --</h3>,
@@ -122,28 +131,29 @@ export default function Tool() {
                             xOverflow: "scroll"
                         }} key={1}>
                             <div>
-                                <label htmlFor="paintColor">Paint Color:</label>
-                                <input type="color" id="paintColor" value={paintColor} onChange={e => updatePaintColor(e.target.value)} />
-                            
+                                <div style={{
+                                    width: DEFAULT_PIXEL_SIDE_LENGTH*gridWidth+"px"
+                                }} className={styles.taskBar}>
+                                    <label htmlFor="paintColor">Paint Color:</label>
+                                    <input type="color" id="paintColor" value={paintColor} onChange={e => updatePaintColor(e.target.value)} />
+                                </div>
+
                                 <div style={{
                                     width: DEFAULT_PIXEL_SIDE_LENGTH*gridWidth+"px",
-                                    marginTop: "20px",
-                                    display: "flex",
-                                    flexFlow: "row wrap",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    border: "1px solid white",
-                                    padding: "5px"
-                                }}>
+                                }} className={styles.taskBar}>
                                     <div style={{
                                         display: "flex",
                                         flexFlow: "row wrap",
-                                        justifyContent: "center"
+                                        justifyContent: "start"
                                     }}>
                                         <IconRadioInput thingType="tool" thingName="draw" />
                                         <IconRadioInput thingType="tool" thingName="erase" />
                                     </div>
-                                    
+                                </div>
+                                <div style={{
+                                    width: DEFAULT_PIXEL_SIDE_LENGTH*gridWidth+"px",
+                                    justifyContent: "space-between"
+                                }} className={styles.taskBar}>
                                     <div style={{
                                         display: "flex",
                                         flexFlow: "row wrap",
@@ -155,6 +165,26 @@ export default function Tool() {
                                         <IconRadioInput thingType="action" actionContent="⌕-" thingName="zoom out" onClick={() =>
                                             updatePixelSideLength(pixelSideLength - 10)
                                         } />
+                                        
+                                    </div>
+                                    <div style={{
+                                        display: "flex",
+                                        flexFlow: "row wrap",
+                                        justifyContent: "center"
+                                    }}>
+                                        <IconRadioInput thingType="action" actionContent="↩" thingName="undo" onClick={() => {
+                                            if (history.current.length > 1) {
+                                                history.current.pop();
+                                                updateGridStatus(history.current[history.current.length-1]);
+                                            }
+                                        }} />
+                                        <IconRadioInput thingType="action" actionContent="🗑️" thingName="clear artwork" onClick={() => {
+                                            if (confirm("Are you sure you want to clear your artwork?")) {
+                                                let tempGridStatus = gridStatus.slice();
+                                                history.current.push(tempGridStatus.fill("#ffffff"));
+                                                updateGridStatus(tempGridStatus.fill("#ffffff"));
+                                            }
+                                        }} />
                                     </div>
                                 </div>
                             </div>
