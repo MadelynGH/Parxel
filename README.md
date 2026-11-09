@@ -1,5 +1,9 @@
 # Parxel
 A pixel art drawing app! Made with Next.js.
+<br>
+Screenshot of the app at the bottom of this README.md.
+<br>
+I hope you enjoy it!!
 
 <hr />
 
