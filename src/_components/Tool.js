@@ -117,6 +117,7 @@ export default function Tool() {
                                     updateGridWidth(info["gridWidth"]);
                                     updateGridHeight(info["gridHeight"]);
                                     updateGridStatus(info["gridStatus"]);
+                                    history.current = [info["gridStatus"]];
                                     updateStage(1);
                                 });
 
