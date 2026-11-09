@@ -1,9 +1,7 @@
 # Parxel
-A pixel art drawing app! Made with Next.js.
+A fun pixel art drawing app! Allows you to export your artwork as an svg or as a .parxel file. (.parxel files can be re-imported into Parxel so you can continue working!)
 <br>
-Screenshot of the app at the bottom of this README.md.
-<br>
-I hope you enjoy it!!
+Made with Next.js. and VS Code.
 
 <hr />
 
