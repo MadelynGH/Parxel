@@ -1,3 +1,4 @@
+<img width="1469" height="840" alt="Screenshot 2026-11-08 at 10 26 31 PM" src="https://github.com/user-attachments/assets/029fbbad-4815-4842-ae6d-d2b0647df903" />
 # Parxel
 A pixel art drawing app! Made with Next.js.
 
