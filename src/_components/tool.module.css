@@ -26,4 +26,5 @@
     border: 1px solid white;
     padding: 12px;
     box-sizing: border-box;
+    border-radius: 8px;
 }

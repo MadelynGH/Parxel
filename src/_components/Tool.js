@@ -17,6 +17,7 @@ export default function Tool() {
     const [gridWidth, updateGridWidth] = useState(20);
     const [gridHeight, updateGridHeight] = useState(20);
     const [stage, updateStage] = useState(0);
+    const [gridLines, updateGridLines] = useState(true);
     
     const fileInput = useRef(null);
     const svgRef = useRef(null);
@@ -34,7 +35,7 @@ export default function Tool() {
                 backgroundColor: gridStatus[coordinate],
                 width: pixelSideLength+"px",
                 height: pixelSideLength+"px",
-                border: "0.5px solid lightgray",
+                border: gridLines ? "0.5px solid lightgray" : "none",
                 boxSizing: "border-box"
             }} onPointerOver={() => {
                 if (isMouseDown) {
@@ -50,7 +51,7 @@ export default function Tool() {
         );
     }
 
-    function IconRadioInput({ thingType, thingName, onClick, actionContent }) {
+    function IconRadioInput({ thingType, thingName, onClick, actionIcon, settingIcon, settingToggleState }) {
         if (thingType == "tool") {
             return (
                 <input title={thingName} type="radio" name="tool" value={thingName} className={styles[thingName]} checked={currentTool == thingName} onChange={() => {
@@ -61,7 +62,13 @@ export default function Tool() {
             );
         } else if (thingType == "action") {
             return (
-                <button title={thingName} className={styles.actionButton} onClick={onClick}>{actionContent}</button>
+                <button title={thingName} className={styles.actionButton} onClick={onClick}>{actionIcon}</button>
+            );
+        } else if (thingType == "setting") {
+            return (
+                <button title={thingName} className={styles.actionButton} onClick={onClick} style={{
+                    backgroundColor: settingToggleState ? "#ffffff30" : "none"
+                }}>{settingIcon}</button>
             );
         }
     }
@@ -94,12 +101,12 @@ export default function Tool() {
                             updateGridStatus(Array(gridWidth*gridHeight).fill("#ffffff"));
                             updateStage(1);
                         }} className={montserrat.className}>Continue</button>
-                    </div>, <h3 key={1}>-- OR --</h3>,
+                    </div>, <h3 key={1}>— OR —</h3>,
                     <div key={2}>
                         <h2>Import .parxel file</h2>
                         <input type="file" ref={fileInput} style={{
                             marginBottom: "20px"
-                        }} accept=".parxel" />
+                        }} accept=".parxel" className={montserrat.className} />
                         <br />
                         <button className={montserrat.className} onClick={() => {
                             if (fileInput.current.files[0]) {
@@ -159,26 +166,28 @@ export default function Tool() {
                                         flexFlow: "row wrap",
                                         justifyContent: "center"
                                     }}>
-                                        <IconRadioInput thingType="action" actionContent="⌕+" thingName="zoom in" onClick={() =>
+                                        <IconRadioInput thingType="action" actionIcon="⌕+" thingName="zoom in" onClick={() =>
                                             updatePixelSideLength(pixelSideLength + 10)
                                         } />
-                                        <IconRadioInput thingType="action" actionContent="⌕-" thingName="zoom out" onClick={() =>
+                                        <IconRadioInput thingType="action" actionIcon="⌕-" thingName="zoom out" onClick={() =>
                                             updatePixelSideLength(pixelSideLength - 10)
                                         } />
-                                        
+                                        <IconRadioInput thingType="setting" settingIcon="⌗" thingName="toggle gridlines" onClick={() =>
+                                            updateGridLines(gridLines ? false : true)
+                                        } settingToggleState={gridLines} />
                                     </div>
                                     <div style={{
                                         display: "flex",
                                         flexFlow: "row wrap",
                                         justifyContent: "center"
                                     }}>
-                                        <IconRadioInput thingType="action" actionContent="↩" thingName="undo" onClick={() => {
+                                        <IconRadioInput thingType="action" actionIcon="↩" thingName="undo" onClick={() => {
                                             if (history.current.length > 1) {
                                                 history.current.pop();
                                                 updateGridStatus(history.current[history.current.length-1]);
                                             }
                                         }} />
-                                        <IconRadioInput thingType="action" actionContent="🗑️" thingName="clear artwork" onClick={() => {
+                                        <IconRadioInput thingType="action" actionIcon="🗑️" thingName="clear artwork" onClick={() => {
                                             if (confirm("Are you sure you want to clear your artwork?")) {
                                                 let tempGridStatus = gridStatus.slice();
                                                 history.current.push(tempGridStatus.fill("#ffffff"));
